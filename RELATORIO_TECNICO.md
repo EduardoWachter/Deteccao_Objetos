@@ -22,7 +22,7 @@
 | Turma | 330 |
 | Estratégia paralela | Pthreads |
 | Plataforma testada | macOS |
-| Commit avaliado | [PREENCHER HASH DO COMMIT] |
+| Commit avaliado | 7aa63ab3d1906d38e18b6e4a6b125c3c67b17920 |
 
 ## Resumo
 
