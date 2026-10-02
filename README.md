@@ -54,7 +54,11 @@ As saidas da execucao padrao sao gravadas em:
 - `resultado_sequencial.txt`
 - `resultado_paralelo.txt`
 
-Cada configuracao e executada 10 vezes e o tempo apresentado e a mediana.
+Cada configuração é executada 10 vezes e o tempo apresentado é a mediana.
+
+Para a matriz grande de desempenho, os programas também exibem os
+10 tempos individuais, permitindo registrar os dados brutos das
+repetições no relatório.
 
 ## Ferramentas externas
 

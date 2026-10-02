@@ -413,7 +413,8 @@ static int contarObjetosParalelo(
 static double executarConfiguracao(
     const Caso *caso,
     int numeroThreads,
-    int *resultado
+    int *resultado,
+    double *temposSaida
 ) {
     double tempos[REPETICOES];
     int r;
@@ -450,6 +451,10 @@ static double executarConfiguracao(
         }
 
         tempos[r] = fim - inicio;
+
+        if (temposSaida != NULL) {
+            temposSaida[r] = tempos[r];
+        }
     }
 
     *resultado = referencia;
@@ -479,6 +484,8 @@ int main(int argc, char *argv[]) {
     Caso casos[NUM_CASOS];
     int threads1;
     int threads2;
+    double temposGrande1[REPETICOES];
+    double temposGrande2[REPETICOES];
     int i;
 
     threads1 = THREADS_PADRAO_1;
@@ -538,12 +545,15 @@ int main(int argc, char *argv[]) {
         tempo1 = executarConfiguracao(
             &casos[i],
             threads1,
-            &resultado1
+            &resultado1,
+            i == NUM_CASOS - 1 ? temposGrande1 : NULL
         );
+
         tempo2 = executarConfiguracao(
             &casos[i],
             threads2,
-            &resultado2
+            &resultado2,
+            i == NUM_CASOS - 1 ? temposGrande2 : NULL
         );
 
         correto = (resultado1 == casos[i].esperado) &&
@@ -562,6 +572,26 @@ int main(int argc, char *argv[]) {
             resultado2,
             tempo2,
             correto ? "OK" : "ERRO"
+        );
+    }
+    
+    printf("\n");
+    printf("Tempos individuais - Caso 6 (4000x4000)\n");
+
+    printf(
+        "Repeticao | %d threads (s) | %d threads (s)\n",
+        threads1,
+        threads2
+    );
+
+    printf("----------|---------------|---------------\n");
+
+    for (i = 0; i < REPETICOES; i++) {
+        printf(
+            "%9d | %13.9f | %13.9f\n",
+            i + 1,
+            temposGrande1[i],
+            temposGrande2[i]
         );
     }
 

@@ -125,6 +125,7 @@ static int contarObjetosSequencial(
 
 int main(void) {
     Caso casos[NUM_CASOS];
+    double temposGrande[REPETICOES];
     int i;
 
     prepararCasos(casos);
@@ -167,6 +168,10 @@ int main(void) {
             );
             fim = tempoAtual();
             tempos[r] = fim - inicio;
+            
+            if (i == NUM_CASOS - 1) {
+                temposGrande[r] = tempos[r];
+            }
         }
 
         tempoMediano = calcularMediana(tempos, REPETICOES);
@@ -184,6 +189,15 @@ int main(void) {
         );
     }
 
+    printf("\n");
+    printf("Tempos individuais - Caso 6 (4000x4000)\n");
+    printf("Repeticao | Tempo (s)\n");
+    printf("----------|-------------\n");
+
+    for (i = 0; i < REPETICOES; i++) {
+        printf("%9d | %11.9f\n", i + 1, temposGrande[i]);
+    }
+    
     printf("\n");
     printf("===============================================================\n");
     printf("Teste sequencial finalizado.\n");

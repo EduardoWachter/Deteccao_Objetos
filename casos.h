@@ -71,7 +71,6 @@ static const int CASO4[9][12] = {
     {0,0,0,0,0,1,0,0,0,0,0,1}
 };
 
-/* Caso 5 exatamente como apresentado no enunciado. */
 static const int CASO5[12][12] = {
     {1,0,0,0,0,1,1,1,1,0,1,1},
     {0,1,0,0,0,1,0,0,1,0,1,0},
