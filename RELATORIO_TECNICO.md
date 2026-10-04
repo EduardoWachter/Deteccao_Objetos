@@ -487,6 +487,19 @@ Conforme a orientação atualizada do professor, a apresentação do trabalho se
 | Duração | [07:25] |
 | Privacidade | Não listado |
 | Senha, se aplicável | `Não se aplica` |
+| Data da última verificação do acesso | [DD/MM/AAAA] |
+
+### 13.1 Conteúdo do vídeo
+
+- [x] Problema e estratégia escolhida.
+- [x] Implementação sequencial e referência de correção.
+- [x] Decomposição, processos/threads e sincronização.
+- [x] Consolidação de objetos que atravessam regiões.
+- [x] Demonstração executável.
+- [x] Testes obrigatórios e adicionais.
+- [x] Resultados de desempenho.
+- [x] Conclusões.
+- [x] Participação de ambos os integrantes, quando o trabalho for em dupla.
 
 ## 14. Contribuições dos integrantes
 
