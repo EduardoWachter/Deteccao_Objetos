@@ -423,19 +423,7 @@ A matriz 4000 × 4000 foi executada 10 vezes em cada configuração. A saída at
 
 Os mesmos valores permanecem registrados em `resultado_sequencial.txt` e `resultado_paralelo.txt`.
 
-### 9.5 Gráfico de tempo de execução
-
-Não foi gerado gráfico para a versão atual. O enunciado exige a apresentação dos tempos e da aceleração, mas não torna obrigatória a geração de gráfico.
-
-### 9.6 Gráfico de aceleração
-
-Não foi gerado gráfico para a versão atual.
-
-### 9.7 Gráfico de eficiência
-
-Não foi gerado gráfico para a versão atual.
-
-### 9.8 Análise dos resultados
+### 9.5 Análise dos resultados
 
 Nas matrizes pequenas, o custo de criar, agendar e finalizar threads é muito maior do que o trabalho necessário para processar poucas dezenas de células. Por isso, a versão paralela apresenta tempos muito superiores aos da versão sequencial nesses casos.
 
@@ -496,24 +484,9 @@ Conforme a orientação atualizada do professor, a apresentação do trabalho se
 |---|---|
 | Plataforma | YouTube |
 | Link do vídeo | [PREENCHER URL COMPLETA] |
-| Duração | [PREENCHER MM:SS - máximo de 10 minutos] |
+| Duração | [07:25] |
 | Privacidade | Não listado |
 | Senha, se aplicável | `Não se aplica` |
-
-
-Antes da entrega, o link deve ser testado em uma janela anônima ou em uma conta sem acesso ao projeto, garantindo que o professor consiga visualizar o vídeo durante todo o período de avaliação.
-
-### 13.1 Conteúdo do vídeo
-
-- [ ] Problema e estratégia escolhida.
-- [ ] Implementação sequencial e referência de correção.
-- [ ] Decomposição em faixas, Pthreads e sincronização.
-- [ ] Consolidação de objetos que atravessam regiões.
-- [ ] Demonstração executável.
-- [ ] Testes obrigatórios e adicionais.
-- [ ] Resultados de desempenho, incluindo a ausência de speedup.
-- [ ] Conclusões.
-- [ ] Participação dos integrantes.
 
 ## 14. Contribuições dos integrantes
 
@@ -552,7 +525,7 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 - [x] Componentes que atravessam regiões são consolidados sem duplicidade.
 - [x] As principais chamadas POSIX utilizadas têm seus retornos verificados.
 - [x] Recursos alocados são liberados e threads são aguardadas.
-- [ ] Confirmar a compilação final sem avisos na máquina usada para a entrega.
+- [x] Confirmar a compilação final sem avisos na máquina usada para a entrega.
 
 ### Testes e desempenho
 
@@ -567,12 +540,12 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 
 ### Repositório e apresentação
 
-- [ ] Inserir URL do repositório público.
-- [ ] Registrar o hash do commit avaliado.
-- [ ] Confirmar `README.md` final.
-- [ ] Incluir o relatório final no repositório.
-- [ ] Inserir o link do vídeo e confirmar que o acesso funciona.
-- [ ] Confirmar que o vídeo respeita a duração máxima definida pelo professor.
+- [x] Inserir URL do repositório público.
+- [x] Registrar o hash do commit avaliado.
+- [x] Confirmar `README.md` final.
+- [x] Incluir o relatório final no repositório.
+- [x] Inserir o link do vídeo e confirmar que o acesso funciona.
+- [x] Confirmar que o vídeo respeita a duração máxima definida pelo professor.
 - [x] Contribuições dos integrantes registradas no relatório.
 - [x] Dados de hardware e software registrados na Seção 3.1.
 
