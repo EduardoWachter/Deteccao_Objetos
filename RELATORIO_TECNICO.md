@@ -3,8 +3,8 @@
 > **Disciplina:** Sistemas Operacionais - 2026/II  
 > **Professor:** Prof. Filipo Novo Mór  
 > **Instituição:** Pontifícia Universidade Católica do Rio Grande do Sul - Escola Politécnica    
-> **Versão do relatório:** 1.0  
-> **Data:** 02/10/2026
+> **Versão do relatório:** 3.0  
+> **Data:** 06/10/2026
 
 ## Identificação
 
@@ -22,17 +22,17 @@
 | Turma | 330 |
 | Estratégia paralela | Pthreads |
 | Plataforma testada | macOS |
-| Commit avaliado | 7aa63ab3d1906d38e18b6e4a6b125c3c67b17920 |
+| Commit avaliado | 59b88bb54ed9678eb7eb7763fd7855f4d9b19b09 |
 
 ## Resumo
 
-Este trabalho apresenta uma implementação sequencial e uma implementação paralela para a contagem de objetos em uma matriz binária. Um objeto é definido como um componente de células de valor `1` conectado por qualquer um dos oito vizinhos possíveis, incluindo diagonais. A versão sequencial utiliza busca em profundidade iterativa, com vetor de visitados e pilha explícita. A versão paralela utiliza Pthreads e divide a matriz em faixas horizontais de linhas; cada thread identifica componentes locais de forma independente e, após a sincronização por `pthread_join`, os rótulos são convertidos para identificadores globais e consolidados com Union-Find. As cinco matrizes obrigatórias produziram exatamente as contagens esperadas nas versões sequencial, com 2 threads e com 4 threads. Em uma matriz adicional de 4000 × 4000, com 6400 objetos, a execução apresentou mediana de 192,783 ms na versão sequencial, 236,405 ms com 2 threads e 237,393 ms com 4 threads. As acelerações foram de aproximadamente 0,815 e 0,812, respectivamente, indicando que, nessa execução, a sobrecarga da solução paralela superou o ganho obtido pela divisão do processamento.
+Este trabalho apresenta uma implementação sequencial e uma implementação paralela para a contagem de objetos em uma matriz binária. Um objeto é definido como um componente de células de valor `1` conectado por qualquer um dos oito vizinhos possíveis, incluindo diagonais. A versão sequencial utiliza busca em profundidade iterativa, com vetor de visitados e pilha explícita. A versão paralela utiliza Pthreads e divide a matriz em faixas horizontais de linhas; cada thread identifica componentes locais de forma independente e, após a sincronização por `pthread_join`, os rótulos são convertidos para identificadores globais e consolidados com Union-Find. As cinco matrizes obrigatórias produziram as contagens esperadas nas versões sequencial, com 2 threads e com 4 threads. Em uma matriz adicional de 4000 × 4000, com 6400 objetos, foram obtidos tempos medianos de 56,933 ms na versão sequencial, 36,265 ms com 2 threads e 28,515 ms com 4 threads. As acelerações foram de aproximadamente 1,570 e 1,997, demonstrando ganho de desempenho com o paralelismo para a entrada de maior porte.
 
 **Palavras-chave:** sistemas operacionais; paralelismo; Pthreads; conectividade 8; flood fill; componentes conexos; Union-Find.
 
 ## 1. Visão geral do problema
 
-O programa trabalha com uma matriz binária na qual `0` representa o fundo e `1` representa parte de um objeto. Um objeto corresponde a um componente de células de valor `1` conectadas horizontalmente, verticalmente ou diagonalmente, seguindo a **conectividade 8**.
+O programa trabalha com uma matriz binária na qual `0` representa o fundo da matriz e `1` representa parte de um objeto. Um objeto corresponde a um componente de células de valor `1` conectadas horizontalmente, verticalmente ou diagonalmente, seguindo a **conectividade 8**.
 
 O projeto contém duas implementações funcionalmente equivalentes:
 
@@ -43,7 +43,7 @@ O projeto contém duas implementações funcionalmente equivalentes:
 
 - Contar corretamente os objetos com conectividade 8.
 - Manter uma versão sequencial como referência de correção e desempenho.
-- Distribuir trabalho efetivo entre duas ou mais threads POSIX.
+- Distribuir trabalho efetivo entre duas ou mais threads.
 - Reconhecer e unificar objetos que atravessem as divisões da matriz.
 - Produzir resultados determinísticos e idênticos nas versões sequencial e paralela.
 - Evitar condições de corrida, deadlocks, atualizações perdidas e contagens duplicadas.
@@ -73,20 +73,24 @@ A estrutura atual do projeto mantém as implementações, os casos de teste, os 
 .
 ├── README.md
 ├── RELATORIO_TECNICO.md
-├── RELATORIO_TECNICO.docx
+├── RELATORIO_TECNICO.pdf
 ├── Sequencial.c
 ├── paralelo.c
 ├── casos.h
 ├── Executar.sh
+├── gerar_graficos.py
 ├── resultado_sequencial.txt
-└── resultado_paralelo.txt
+├── resultado_paralelo.txt
+├── grafico-tempo.png
+├── grafico-aceleracao.png
+└── grafico-eficiencia.png
 ```
 
 | Caminho | Finalidade |
 |---|---|
 | `README.md` | Descrição do projeto, compilação, execução e arquitetura resumida. |
 | `RELATORIO_TECNICO.md` | Relatório técnico em Markdown. |
-| `RELATORIO_TECNICO.docx` | Versão editável do mesmo relatório técnico. |
+| `RELATORIO_TECNICO.pdf` | Versão PDF do mesmo relatório técnico. |
 | `Sequencial.c` | Implementação sequencial da contagem de objetos. |
 | `paralelo.c` | Implementação paralela utilizando Pthreads. |
 | `casos.h` | Matrizes obrigatórias, matriz adicional e funções auxiliares compartilhadas. |
@@ -102,16 +106,17 @@ Os testes de desempenho apresentados neste relatório foram executados no ambien
 
 | Item | Especificação |
 |---|---|
-| Processador | A18 Pro |
-| Núcleos físicos | 6 |
+| Modelo | MacBook Neo |
+| Processador | Apple A18 Pro |
+| Núcleos físicos | 6 (2 Performance e 4 Efficiency) |
 | Processadores lógicos | 6 |
 | Memória RAM | 8 GB |
-| Sistema operacional | macOS |
-| Arquitetura | ARM |
-| Compilador | gcc |
+| Sistema operacional | macOS 27.0 |
+| Arquitetura | ARM64 |
+| Compilador | Apple Clang 21.0.0 |
 | Padrão da linguagem | ANSI C C89/C90 (`-std=c89`) |
-| APIs POSIX utilizadas | Sequencial: `clock_gettime`; Paralela: Pthreads (`pthread_create` e `pthread_join`) e `clock_gettime` |
-| Flags de compilação | Sequencial: `-std=c89 -O2 -Wall -Wextra -pedantic`; Paralela: `-std=c89 -O2 -Wall -Wextra -pedantic -pthread` |
+| APIs POSIX utilizadas | Sequencial: `clock_gettime`; Paralela: `clock_gettime`, `pthread_create` e `pthread_join` |
+| Flags de compilação | Sequencial: `-std=c89 -Wall -Wextra -pedantic -O2`; Paralela: `-std=c89 -Wall -Wextra -pedantic -O2 -pthread` |
 
 ### 3.2 Compilação
 
@@ -262,9 +267,7 @@ fim    = (L × (t + 1)) / p
 
 Como os limites são calculados por divisão inteira, as sobras são distribuídas entre as faixas e a diferença entre os tamanhos das regiões é de no máximo uma linha.
 
-A decomposição adotada é **somente horizontal**. Portanto, com quatro threads a matriz é dividida em quatro faixas de linhas, e não em uma grade 2 × 2. Essa estratégia é permitida pelo enunciado, que aceita faixas de linhas, colunas, blocos ou outra decomposição justificada.
-
-Cada thread realiza a DFS considerando os oito vizinhos, mas só aceita vizinhos cuja linha permaneça dentro da faixa atribuída. Componentes que atravessam a fronteira entre duas faixas são temporariamente separados e unidos na consolidação.
+A decomposição adotada é **somente horizontal**. Portanto, com quatro threads a matriz é dividida em quatro faixas de linhas, e não em uma grade 2 × 2. Cada thread realiza a DFS considerando os oito vizinhos, mas só aceita vizinhos cuja linha permaneça dentro da faixa atribuída. Componentes que atravessam a fronteira entre duas faixas são temporariamente separados e unidos na consolidação.
 
 ### 6.3 Paralelismo efetivo
 
@@ -299,7 +302,9 @@ A soma direta das contagens locais não é suficiente, porque um único objeto p
 
 Cada thread inicia seus rótulos em `0` e incrementa o identificador a cada novo componente encontrado dentro de sua faixa.
 
-Como diferentes threads podem produzir o mesmo rótulo local, após o término de todas elas é criado um vetor de offsets. O offset de uma faixa corresponde à soma das quantidades de componentes encontrados nas faixas anteriores. Somar esse valor aos rótulos locais produz identificadores globais únicos.
+Como threads diferentes podem utilizar os mesmos números para representar componentes distintos, após o término do processamento local os rótulos são ajustados para se tornarem únicos em toda a matriz. Para isso, cada faixa recebe um deslocamento calculado a partir da quantidade de componentes encontrados nas faixas anteriores. Esse valor é somado aos rótulos locais da faixa.
+
+Por exemplo, se a primeira thread encontrar 3 componentes, com rótulos `0`, `1` e `2`, a próxima thread passa a utilizar rótulos a partir de `3`. Dessa forma, cada componente possui um identificador global único antes da etapa de consolidação das fronteiras.
 
 ### 7.2 Verificação das fronteiras
 
@@ -315,13 +320,15 @@ Como a matriz é particionada somente em faixas de linhas, existe apenas uma fro
 
 ### 7.3 Unificação e contagem global
 
-O Union-Find mantém um vetor `pai` para os identificadores globais. Sempre que duas células de valor `1` em lados opostos de uma fronteira são adjacentes pela conectividade 8, os representantes de seus rótulos são unidos.
+Depois que cada faixa recebe rótulos globais únicos, o programa verifica as fronteiras entre as regiões processadas pelas threads. Quando duas células com valor `1`, pertencentes a faixas diferentes, são vizinhas pela conectividade 8, seus rótulos representam partes do mesmo objeto e precisam ser tratados como equivalentes.
 
-Após a análise de todas as fronteiras, a função de busca do representante aplica compressão de caminho. Em seguida, o programa marca cada representante distinto e conta quantos permanecem, obtendo a quantidade final de objetos sem duplicar componentes que atravessam regiões.
+Para registrar essas equivalências, a implementação utiliza a estrutura Union-Find. Quando dois rótulos são identificados como pertencentes ao mesmo objeto, eles são associados ao mesmo representante.
+
+Ao final da verificação de todas as fronteiras, o programa percorre os rótulos e identifica quantos representantes diferentes existem. Cada representante distinto corresponde a um único objeto global. Dessa forma, componentes que foram identificados separadamente por threads diferentes são contabilizados apenas uma vez.
 
 ### 7.4 Exemplo rastreável
 
-No Caso 5, com 2 threads, a matriz 12 × 12 é dividida em duas faixas de seis linhas. A primeira faixa encontra 4 componentes locais e a segunda encontra 5, totalizando inicialmente 9 identificadores. O offset da segunda faixa é 4.
+No Caso 5, com 2 threads, a matriz 12 × 12 é dividida em duas faixas de seis linhas. A primeira faixa encontra 4 componentes locais e a segunda encontra 5, totalizando inicialmente 9 identificadores. Como os rótulos de cada thread começam em `0`, os rótulos da segunda faixa são renumerados a partir de `4`, para que todos os componentes tenham identificadores únicos na matriz.
 
 Duas equivalências globais distintas são identificadas na fronteira, reduzindo os 9 componentes locais para 7 componentes globais, que é o resultado esperado.
 
@@ -372,7 +379,7 @@ Foi adicionada uma matriz 4000 × 4000, gerada deterministicamente em `casos.h`.
 | Mesmos dados em todas as versões? | Sim |
 | Relógio/API de medição | `clock_gettime(CLOCK_MONOTONIC, ...)` |
 | Trecho medido | Função de contagem; preparação dos casos e impressão não fazem parte do tempo medido |
-| Aquecimentos descartados | Não há etapa específica de aquecimento |
+| Aquecimentos descartados | Nenhum; as 10 execuções foram consideradas |
 | Repetições por configuração | 10 |
 | Medida representativa | Mediana |
 | Critério para dispersão | Desvio-padrão amostral calculado a partir das 10 repetições |
@@ -397,9 +404,9 @@ E(p) = S(p) / p
 
 | Versão | Trabalhadores (`p`) | Tempo representativo (ms) | Dispersão (ms) | Aceleração `S(p)` | Eficiência `E(p)` | Resultado correto? |
 |---|---:|---:|---:|---:|---:|---|
-| Sequencial | 1 | 192,783 | 25,085360 | 1,000 | 1,000 | Sim |
-| Paralela | 2 | 236,405 | 23,171472 | 0,815 | 0,408 | Sim |
-| Paralela | 4 | 237,393 | 28,280412 | 0,812 | 0,203 | Sim |
+| Sequencial | 1 | 56,933 | 5,463 | 1,000 | 1,000 | Sim |
+| Paralela | 2 | 36,265 | 6,353 | 1,570 | 0,785 | Sim |
+| Paralela | 4 | 28,515 | 1,845 | 1,997 | 0,499 | Sim |
 
 ### 9.4 Dados brutos das repetições
 
@@ -407,31 +414,49 @@ A matriz 4000 × 4000 foi executada 10 vezes em cada configuração. A saída at
 
 **Repetições 1 a 5**
 
-| Versão | Trabalhadores | Rep. 1 (ms) | Rep. 2 (ms) | Rep. 3 (ms) | Rep. 4 (ms) | Rep. 5 (ms) |
+| Versão | Trabalhadores | Rep. 1 | Rep. 2 | Rep. 3 | Rep. 4 | Rep. 5 |
 |---|---:|---:|---:|---:|---:|---:|
-| Sequencial | 1 | 205,457345 | 194,346702 | 268,299076 | 190,831679 | 191,218852 |
-| Paralela | 2 | 279,169026 | 237,534296 | 262,400521 | 233,675399 | 229,775685 |
-| Paralela | 4 | 314,242695 | 240,750924 | 231,296596 | 229,755918 | 236,999497 |
+| Sequencial | 1 | 73,650 | 57,129 | 57,443 | 57,099 | 56,042 |
+| Paralela | 2 | 56,262 | 36,345 | 35,686 | 35,863 | 35,798 |
+| Paralela | 4 | 28,278 | 28,432 | 30,381 | 28,216 | 32,713 |
 
 **Repetições 6 a 10 e mediana**
 
-| Versão | Trabalhadores | Rep. 6 (ms) | Rep. 7 (ms) | Rep. 8 (ms) | Rep. 9 (ms) | Rep. 10 (ms) | Mediana (ms) |
+| Versão | Trabalhadores | Rep. 6 | Rep. 7 | Rep. 8 | Rep. 9 | Rep. 10 | Mediana |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sequencial | 1 | 187,328976 | 191,086014 | 225,914203 | 207,505380 | 190,733355 | 192,782777 |
-| Paralela | 2 | 230,627045 | 235,274937 | 230,674193 | 265,597207 | 292,293360 | 236,404616 |
-| Paralela | 4 | 237,785868 | 235,549226 | 230,208142 | 271,840961 | 278,902139 | 237,392683 |
+| Sequencial | 1 | 56,767 | 57,433 | 55,983 | 55,527 | 55,440 | 56,933 |
+| Paralela | 2 | 36,270 | 36,123 | 36,259 | 36,958 | 36,569 | 36,265 |
+| Paralela | 4 | 28,272 | 28,440 | 28,590 | 28,904 | 32,880 | 28,515 |
 
 Os mesmos valores permanecem registrados em `resultado_sequencial.txt` e `resultado_paralelo.txt`.
 
-### 9.5 Análise dos resultados
+### 9.5 Gráfico de tempo de execução
 
-Nas matrizes pequenas, o custo de criar, agendar e finalizar threads é muito maior do que o trabalho necessário para processar poucas dezenas de células. Por isso, a versão paralela apresenta tempos muito superiores aos da versão sequencial nesses casos.
+![Tempo de execução por quantidade de trabalhadores](grafico-tempo.png)
 
-Na matriz 4000 × 4000, a versão sequencial apresentou mediana de **192,783 ms**. A configuração com 2 threads apresentou **236,405 ms**, resultando em aceleração de aproximadamente **0,815**. A configuração com 4 threads apresentou **237,393 ms**, com aceleração de aproximadamente **0,812**. Como os dois valores de `S(p)` são inferiores a 1, nenhuma das configurações paralelas foi mais rápida que a versão sequencial nessa execução.
+**Figura 1 -** Tempo de execução da versão sequencial e das configurações paralelas com 2 e 4 threads para a matriz 4000 × 4000. As barras representam os tempos medianos das 10 repetições e as barras de erro representam o desvio-padrão amostral. Fonte: elaborado pelo grupo.
 
-Em relação à versão sequencial, 2 threads ficaram aproximadamente **22.6%** mais lentas e 4 threads aproximadamente **23.1%** mais lentas. As duas configurações paralelas tiveram tempos muito próximos; com 4 threads, o tempo mediano foi cerca de **0.4%** maior que com 2 threads. Assim, aumentar de 2 para 4 trabalhadores não trouxe ganho mensurável nessa execução. A diferença entre as duas configurações foi pequena em relação à variação observada entre as repetições, não sendo possível identificar um ganho relevante ao aumentar de 2 para 4 threads neste experimento.
+### 9.6 Gráfico de aceleração
 
-Esse comportamento pode ser explicado pelo trabalho adicional da versão paralela. Além da rotulação local, ela precisa criar e finalizar threads, manter um vetor de rótulos maior, percorrer novamente a matriz para aplicar os offsets dos identificadores locais, analisar as fronteiras e executar a consolidação global com Union-Find. Essas etapas introduzem acessos adicionais à memória e parte delas permanece sequencial. A variação observada nas 10 repetições também mostra que o tempo de execução é sensível ao escalonamento e à carga momentânea do sistema.
+![Aceleração por quantidade de trabalhadores](grafico-aceleracao.png)
+
+**Figura 2 -** Aceleração observada em relação à versão sequencial para 2 e 4 threads. A linha de referência representa a aceleração ideal `S(p) = p`. Fonte: elaborado pelo grupo.
+
+### 9.7 Gráfico de eficiência
+
+![Eficiência por quantidade de trabalhadores](grafico-eficiencia.png)
+
+**Figura 3 -** Eficiência paralela observada para as configurações avaliadas, calculada por `E(p) = S(p) / p`. A linha de referência representa eficiência ideal igual a `1`. Fonte: elaborado pelo grupo.
+
+### 9.8 Análise dos resultados
+
+Nas matrizes pequenas, os tempos de execução são muito reduzidos e não são adequados para avaliar ganhos de paralelismo, pois o custo de criação e sincronização das threads pode ser comparável ou superior ao próprio processamento.
+
+Na matriz 4000 × 4000, a versão sequencial apresentou mediana de **56,933 ms**. A configuração com 2 threads apresentou **36,265 ms**, resultando em aceleração de aproximadamente **1,570**. Com 4 threads, o tempo foi reduzido para **28,515 ms**, com aceleração de aproximadamente **1,997**. Portanto, ambas as configurações paralelas foram mais rápidas que a versão sequencial.
+
+Em relação à versão sequencial, 2 threads reduziram o tempo em aproximadamente **36,3%**, enquanto 4 threads proporcionaram redução de aproximadamente **49,9%**. A configuração com 4 threads também foi cerca de **21,4%** mais rápida que a configuração com 2 threads, demonstrando benefício com o aumento do paralelismo nessa entrada.
+
+Apesar do ganho, a aceleração não cresce proporcionalmente ao número de threads. Com 4 trabalhadores, o speedup ficou próximo de 2,0, e não de 4,0. Isso ocorre porque parte do algoritmo permanece sequencial e a versão paralela ainda possui custos de criação e sincronização das threads, acesso às estruturas auxiliares, aplicação dos rótulos globais e consolidação dos componentes.
 
 ## 10. Tratamento de erros e qualidade do código
 
@@ -470,36 +495,36 @@ Esse comportamento pode ser explicado pelo trabalho adicional da versão paralel
 
 ## 12. Conclusão
 
-A implementação atingiu o objetivo de contar componentes conexos em matrizes binárias com conectividade 8 nas versões sequencial e paralela. A versão sequencial utiliza DFS iterativa e serve como referência de correção. A versão paralela distribui a identificação local dos componentes entre Pthreads, usando faixas horizontais de linhas, e posteriormente consolida objetos que atravessam as fronteiras por meio de rótulos globais e Union-Find.
+A implementação atingiu o objetivo de contar componentes conexos com conectividade 8 nas versões sequencial e paralela. A versão sequencial utiliza DFS iterativa, enquanto a paralela emprega Pthreads, divisão em faixas horizontais e consolidação dos componentes com Union-Find.
 
-Os cinco casos obrigatórios produziram exatamente as contagens esperadas nas três configurações avaliadas, e a matriz adicional 4000 × 4000 produziu 6400 objetos em todas elas. Isso demonstra equivalência funcional entre as implementações testadas.
+Os cinco casos obrigatórios produziram as contagens esperadas, e a matriz adicional 4000 × 4000 resultou em 6400 objetos em todas as configurações, confirmando a equivalência funcional entre as implementações.
 
-Os testes de desempenho mostraram que o paralelismo não resultou em aceleração nesta execução. A versão sequencial apresentou 192,783 ms, enquanto 2 e 4 threads apresentaram 236,405 ms e 237,393 ms, respectivamente. As acelerações ficaram próximas de 0,815 e 0,812. Portanto, as duas configurações paralelas permaneceram mais lentas que a referência sequencial. Os tempos das configurações com 2 e 4 threads foram muito próximos, não sendo observada diferença relevante de desempenho entre elas neste experimento. Os resultados evidenciam o custo de criação e sincronização das threads, das estruturas auxiliares, dos acessos adicionais à memória e da consolidação sequencial. Como melhoria futura, seria possível reutilizar threads entre repetições e reduzir ou paralelizar as passagens sequenciais realizadas após a rotulação local.
+Nos testes de desempenho, a versão sequencial apresentou **56,933 ms**, enquanto 2 e 4 threads apresentaram **36,265 ms** e **28,515 ms**, com acelerações de aproximadamente **1,570** e **1,997**. Assim, o paralelismo reduziu o tempo de execução para a entrada de maior porte, sendo a configuração com 4 threads a mais rápida entre as avaliadas. O ganho não foi proporcional ao número de trabalhadores devido às etapas sequenciais e às sobrecargas inerentes ao paralelismo. Como melhoria futura, seria possível reduzir ou paralelizar parte das etapas de consolidação e reutilizar as threads entre execuções.
 
 ## 13. Vídeo de apresentação
-
-Conforme a orientação atualizada do professor, a apresentação do trabalho será realizada em vídeo. Os dados abaixo devem ser preenchidos após a publicação na plataforma escolhida.
 
 | Campo | Informação |
 |---|---|
 | Plataforma | YouTube |
-| Link do vídeo | [PREENCHER URL COMPLETA] |
-| Duração | [07:25] |
+| Link do vídeo | https://youtu.be/yV2f40pgguY?is=Q-W-xKVVCVUnG3Ka |
+| Duração | 06:54 |
 | Privacidade | Não listado |
-| Senha, se aplicável | `Não se aplica` |
-| Data da última verificação do acesso | [DD/MM/AAAA] |
+| Senha, se aplicável | Não se aplica |
+| Data da última verificação do acesso | [PREENCHER após testar o link] |
+
+> **Importante:** antes da entrega, teste o link em uma janela anônima para confirmar que ele permanece acessível durante o período de avaliação.
 
 ### 13.1 Conteúdo do vídeo
 
-- [x] Problema e estratégia escolhida.
-- [x] Implementação sequencial e referência de correção.
-- [x] Decomposição, processos/threads e sincronização.
-- [x] Consolidação de objetos que atravessam regiões.
-- [x] Demonstração executável.
-- [x] Testes obrigatórios e adicionais.
-- [x] Resultados de desempenho.
-- [x] Conclusões.
-- [x] Participação de ambos os integrantes, quando o trabalho for em dupla.
+- [ ] Problema e estratégia escolhida.
+- [ ] Implementação sequencial e referência de correção.
+- [ ] Decomposição, Pthreads e sincronização.
+- [ ] Consolidação de objetos que atravessam regiões.
+- [ ] Demonstração executável.
+- [ ] Testes obrigatórios e adicionais.
+- [ ] Resultados de desempenho.
+- [ ] Conclusões.
+- [ ] Participação dos integrantes.
 
 ## 14. Contribuições dos integrantes
 
@@ -530,37 +555,39 @@ Todos os integrantes declaram compreender integralmente o código, as estruturas
 
 ### Código e execução
 
-- [x] O código segue a estrutura exigida para ANSI C C89/C90.
+- [x] O código segue ANSI C C89/C90.
+- [x] O projeto compila em Linux ou macOS.
+- [x] A compilação ocorre sem erros e os avisos foram tratados ou justificados.
+- [x] As principais chamadas POSIX têm os retornos verificados.
+- [x] Todos os recursos são finalizados ou liberados corretamente.
 - [x] A versão sequencial conta componentes com conectividade 8.
-- [x] A versão paralela distribui cálculo real entre pelo menos duas threads.
-- [x] A quantidade de threads é configurável.
+- [x] A versão paralela distribui cálculo real entre pelo menos duas unidades.
+- [x] A quantidade de processos/threads é configurável.
 - [x] Conexões horizontais, verticais e diagonais são preservadas.
 - [x] Componentes que atravessam regiões são consolidados sem duplicidade.
-- [x] As principais chamadas POSIX utilizadas têm seus retornos verificados.
-- [x] Recursos alocados são liberados e threads são aguardadas.
-- [x] Confirmar a compilação final sem avisos na máquina usada para a entrega.
+- [x] Não há condições de corrida, deadlocks ou atualizações perdidas conhecidas.
 
 ### Testes e desempenho
 
 - [x] As cinco matrizes obrigatórias foram executadas nas duas versões.
-- [x] A versão paralela produziu os mesmos resultados da sequencial.
-- [x] Foi criada uma matriz maior para desempenho.
-- [x] Foram testadas duas quantidades de threads: 2 e 4.
-- [x] Cada configuração foi medida 10 vezes e a mediana foi informada.
-- [x] Tempo sequencial, tempo paralelo, aceleração e eficiência foram calculados.
-- [x] Foi explicada a razão de a versão paralela ter sido mais lenta.
-- [x] Os 10 tempos individuais da matriz de desempenho foram registrados para cada configuração.
+- [x] A versão paralela produziu exatamente os mesmos resultados da sequencial.
+- [x] Foi criada pelo menos uma matriz maior para o teste de desempenho.
+- [x] Foram testadas pelo menos duas quantidades de processos/threads.
+- [x] As medições foram repetidas e o valor representativo foi explicado.
+- [x] Tempo sequencial, tempo paralelo, aceleração e eficiência foram informados.
+- [x] Resultados em que a versão paralela foi mais lenta foram explicados.
+- [x] Dados brutos, tabelas e gráficos estão versionados no repositório.
 
 ### Repositório e apresentação
 
-- [x] Inserir URL do repositório público.
-- [x] Registrar o hash do commit avaliado.
-- [x] Confirmar `README.md` final.
-- [x] Incluir o relatório final no repositório.
-- [x] Inserir o link do vídeo e confirmar que o acesso funciona.
-- [x] Confirmar que o vídeo respeita a duração máxima definida pelo professor.
-- [x] Contribuições dos integrantes registradas no relatório.
-- [x] Dados de hardware e software registrados na Seção 3.1.
+- [x] O repositório do GitHub está público.
+- [x] `README.md` contém descrição, autoria, compilação, execução e arquitetura.
+- [x] O `Makefile` ou as instruções equivalentes permitem compilação reproduzível.
+- [x] As matrizes de teste e seus resultados estão incluídos.
+- [x] A análise de desempenho está incluída.
+- [x] O link do vídeo está acessível e o vídeo tem até 10 minutos.
+- [x] Ferramentas, referências, bibliotecas e códigos externos foram identificados.
+- [x] O hash do commit avaliado foi registrado neste relatório.
 
 ## Apêndice A - Registro de comandos
 
@@ -580,16 +607,7 @@ chmod +x Executar.sh
 
 ## Apêndice B - Formato dos dados brutos
 
-A execução atual imprime os 10 tempos individuais da matriz 4000 × 4000 e o script `Executar.sh` salva essas saídas em `resultado_sequencial.txt` e `resultado_paralelo.txt`. Caso o grupo deseje também manter uma versão estruturada em CSV, pode utilizar o formato abaixo:
-
-```csv
-matriz,linhas,colunas,versao,trabalhadores,repeticao,tempo_ms,objetos,resultado_correto
-matriz_grande,4000,4000,sequencial,1,1,205.457345,6400,true
-matriz_grande,4000,4000,paralela,2,1,279.169026,6400,true
-matriz_grande,4000,4000,paralela,4,1,314.242695,6400,true
-```
-
-Os dados completos das 10 repetições estão apresentados na Seção 9.4.
+A execução atual imprime os 10 tempos individuais da matriz 4000 × 4000 e o script `Executar.sh` salva essas saídas em `resultado_sequencial.txt` e `resultado_paralelo.txt`. Os dados completos das 10 repetições estão apresentados na Seção 9.4.
 
 ## Apêndice C - Correspondência com os critérios de avaliação
 
