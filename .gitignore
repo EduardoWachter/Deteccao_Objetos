@@ -1,0 +1,11 @@
+# Binários compilados
+/Sequencial
+/Paralelo
+*.o
+
+# Arquivos temporários do macOS
+.DS_Store
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
