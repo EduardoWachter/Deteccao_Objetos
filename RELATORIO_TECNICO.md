@@ -3,6 +3,7 @@
 > **Disciplina:** Sistemas Operacionais - 2026/II  
 > **Professor:** Prof. Filipo Novo Mór  
 > **Instituição:** Pontifícia Universidade Católica do Rio Grande do Sul - Escola Politécnica    
+> **Repositório:** https://github.com/EduardoWachter/Deteccao_Objetos
 > **Versão do relatório:** 3.0  
 > **Data:** 06/10/2026
 
