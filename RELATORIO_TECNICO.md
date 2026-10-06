@@ -72,6 +72,7 @@ A estrutura atual do projeto mantém as implementações, os casos de teste, os 
 
 ```text
 .
+├── .gitignore
 ├── README.md
 ├── RELATORIO_TECNICO.md
 ├── RELATORIO_TECNICO.pdf
