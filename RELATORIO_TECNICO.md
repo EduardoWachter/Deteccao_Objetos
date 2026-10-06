@@ -22,7 +22,7 @@
 | Turma | 330 |
 | Estratégia paralela | Pthreads |
 | Plataforma testada | macOS |
-| Commit avaliado | 59b88bb54ed9678eb7eb7763fd7855f4d9b19b09 |
+| Commit avaliado | 66c2b3743dfa0aa6fc9fab62d6e93e086b80ef64 |
 
 ## Resumo
 
@@ -78,7 +78,6 @@ A estrutura atual do projeto mantém as implementações, os casos de teste, os 
 ├── paralelo.c
 ├── casos.h
 ├── Executar.sh
-├── gerar_graficos.py
 ├── resultado_sequencial.txt
 ├── resultado_paralelo.txt
 ├── grafico-tempo.png
@@ -510,21 +509,21 @@ Nos testes de desempenho, a versão sequencial apresentou **56,933 ms**, enquant
 | Duração | 06:54 |
 | Privacidade | Não listado |
 | Senha, se aplicável | Não se aplica |
-| Data da última verificação do acesso | [PREENCHER após testar o link] |
+| Data da última verificação do acesso | 06/10/26 |
 
 > **Importante:** antes da entrega, teste o link em uma janela anônima para confirmar que ele permanece acessível durante o período de avaliação.
 
 ### 13.1 Conteúdo do vídeo
 
-- [ ] Problema e estratégia escolhida.
-- [ ] Implementação sequencial e referência de correção.
-- [ ] Decomposição, Pthreads e sincronização.
-- [ ] Consolidação de objetos que atravessam regiões.
-- [ ] Demonstração executável.
-- [ ] Testes obrigatórios e adicionais.
-- [ ] Resultados de desempenho.
-- [ ] Conclusões.
-- [ ] Participação dos integrantes.
+- [x] Problema e estratégia escolhida.
+- [x] Implementação sequencial e referência de correção.
+- [x] Decomposição, Pthreads e sincronização.
+- [x] Consolidação de objetos que atravessam regiões.
+- [x] Demonstração executável.
+- [x] Testes obrigatórios e adicionais.
+- [x] Resultados de desempenho.
+- [x] Conclusões.
+- [x] Participação dos integrantes.
 
 ## 14. Contribuições dos integrantes
 
